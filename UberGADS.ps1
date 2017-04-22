@@ -1,8 +1,25 @@
 ﻿
+#region Functions
+function RequestPassword{
 
+    $Password = Read-Host -AsSecureString -Prompt "Please enter the password for Account $User"
+    $global:Cred = new-Object System.Management.Automation.PSCredential -ArgumentList $User , $Password
+    VerifyPassword
+}
 
+function VerifyPassword{
+    while( -not (Test-Credential $Cred)){
+        Write-Error "It looks like the password you entered was invalid, please try again"
+        RequestPassword
+    }
+}
 
-#region GCDS Configs
+function Write-Error($message){
+        Write-Host -ForegroundColor Red $message
+        [Console]::ResetColor()
+
+}
+
 function loadXMLConfig{
 
     Try{
@@ -24,30 +41,6 @@ function loadXMLConfig{
         $FailedItem = $_.Exception.ItemName
         Write-Error "Something failed parsing the XML-File\n" $ErrorMessage $FailedItem
     }
-}
-#endregion
-
-
-
-#region Functions
-function RequestPassword{
-
-    $Password = Read-Host -AsSecureString -Prompt "Please enter the password for Account $User"
-    $global:Cred = new-Object System.Management.Automation.PSCredential -ArgumentList $User , $Password
-    VerifyPassword
-}
-
-function VerifyPassword{
-    while( -not (Test-Credential $Cred)){
-        Write-Error "It looks like the password you entered was invalid, please try again"
-        RequestPassword
-    }
-}
-
-function Write-Error($message){
-        Write-Host -ForegroundColor Red $message
-        [Console]::ResetColor()
-
 }
 
 function Simulate-GCDS{
@@ -111,7 +104,7 @@ function Create-Users ($path){
 
 
 if(-Not (test-path $path)){
-    Write-Host "CSV-File Not Found. Aborting" -ForegroundColor Red
+    Write-Error "CSV-File Not Found. Aborting"
     return
 }
 import-Csv $path | ForEach-Object{
