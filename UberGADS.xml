@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<Schools>
+    <School>
+        <Shortname>SJS</Shortname>
+        <Longname>St Joseph's Onehunga</Longname>
+        <Hostname>SJS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\SJS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+    <School>
+        <Shortname>HJHS</Shortname>
+        <Longname>Hamilton Junior High School</Longname>
+        <Hostname>HJHS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\HJHS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+    <School>
+        <Shortname>PEPS</Shortname>
+        <Longname>Papatoetoe East Primary School</Longname>
+        <Hostname>PEPS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\PEPS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+	<School>
+        <Shortname>EPS</Shortname>
+        <Longname>Endeavour School</Longname>
+        <Hostname>EPS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>C:\GCDS\Report.log</Report>
+            <Config>"C:\GCDS\EPS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD>
+        	<EXE>"C:\Program Files\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+    <School>
+        <Shortname>HPS</Shortname>
+        <Longname>Huntly Primary School</Longname>
+        <Hostname>HPS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\HPS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+    <School>
+        <Shortname>RPS</Shortname>
+        <Longname>Rototuna Primary School</Longname>
+        <Hostname>RPS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\RPS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+    <School>
+        <Shortname>HNS</Shortname>
+        <Longname>Hillcrest Normal School</Longname>
+        <Hostname>HNS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\HNS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+        <School>
+        <Shortname>KFS</Shortname>
+        <Longname>Kauri Flats School</Longname>
+        <Hostname>KFS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\KFS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+        <School>
+        <Shortname>DSS</Shortname>
+        <Longname>David Street School</Longname>
+        <Hostname>DSS-DC1</Hostname>
+        <GCDS>
+            <EXE>"C:\GCDS\GCDS.lnk"</EXE>
+            <Log>"C:\GCDS\GCDS_sync.log"</Log>
+            <Report>"C:\GCDS\Report.log"</Report>
+            <Config>"C:\GCDS\DSS_2017.xml"</Config>
+        </GCDS>
+        <SyncCMD> 
+        	<EXE>"C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe"</EXE>
+        	<User>GCDS</User>
+        </SyncCMD>	
+    </School>
+</Schools>
