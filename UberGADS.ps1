@@ -22,10 +22,18 @@ function Write-Error($message){
 
 function loadXMLConfig{
 
+    $DefaultXMLName = "UberGADS.xml"
+    $XMLPath = Join-Path -Path $PSScriptRoot -ChildPath $DefaultXMLName
+
     Try{
+
+        if(-not (test-path $XMLPath)){
+            throw [System.IO.FileNotFoundException] "Could not Configuration-XML-File"
+        }
+
         $Hostname = [system.environment]::MachineName
 
-        $XML = [xml] (Get-Content "\\tsclient\D6\UberGADS.xml")
+        $XML = [xml] (Get-Content $XMLPath)
         $global:School = ($XML.Schools.School | where {$_.HostName -eq $Hostname}).Shortname
         $global:SchoolName = ($XML.Schools.School | where {$_.HostName -eq $Hostname}).Longname
         $global:SyncCMD = ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.EXE
@@ -33,13 +41,22 @@ function loadXMLConfig{
         $global:Report = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Report
         $global:Log = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Log
         $global:User = ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.User
-        #$Pw = ConvertTo-SecureString ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.Password 
+        #$Pw = ConvertTo-SecureString ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.Password
         #$global:Cred = new-Object System.Management.Automation.PSCredential -ArgumentList $User , $pw
+    }
+    Catch [System.Management.Automation.ItemNotFoundException],[System.IO.FileNotFoundException]{
+        Write-Error "Coudln't read Configuration-XML-File from $XMLPath"
+
+        Read-Host -Prompt "Exiting"
+        exit 1
+    
     }
     Catch{
         $ErrorMessage = $_.Exception.Message
         $FailedItem = $_.Exception.ItemName
         Write-Error "Something failed parsing the XML-File\n" $ErrorMessage $FailedItem
+        Read-Host -Prompt ""
+        exit 1
     }
 }
 
@@ -68,7 +85,7 @@ Param(
     [System.Diagnostics.Process]$process,
 
     [String]$activity,
-    
+
     [String]$status
 
 )
@@ -140,84 +157,84 @@ import-Csv $path | ForEach-Object{
                     Add-ADGroupMember -Identity $group -Members $_.SamAccountName;
                 }else{
                     Write-Host "Could not find Group" $group "for user" $samName -ForegroundColor Red;
-                }  
+                }
             }
         }
     } | Tee-Object log.txt -Append
-    
+
     Write-Progress -Activity "Creating Users in AD" -Completed
 
 }
 
-<#PSScriptInfo  
-.DESCRIPTION  
-    Simulates an Authentication Request in a Domain envrionment using a PSCredential Object. Returns $true if both Username and Password pair are valid.  
-.VERSION  
-    1.3 
-.GUID  
-    6a18515f-73d3-4fb4-884f-412395aa5054  
-.AUTHOR  
-    Thomas Malkewitz @dotps1  
-.TAGS  
-    PSCredential, Credential 
-.RELEASENOTES  
-    Updated $Domain default value to $Credential.GetNetworkCredential().Domain. 
-    Added support for multipul credential objects to be passed into $Credential. 
-.PROJECTURI 
-    http://dotps1.github.io 
- #> 
- 
-Function Test-Credential { 
-    [OutputType([Bool])] 
-     
-    Param ( 
-        [Parameter( 
-            Mandatory = $true, 
-            ValueFromPipeLine = $true, 
-            ValueFromPipelineByPropertyName = $true 
-        )] 
-        [Alias( 
-            'PSCredential' 
-        )] 
-        [ValidateNotNull()] 
-        [System.Management.Automation.PSCredential] 
-        [System.Management.Automation.Credential()] 
-        $Credential, 
- 
-        [Parameter()] 
-        [String] 
-        $Domain = $Credential.GetNetworkCredential().Domain 
-    ) 
- 
-    Begin { 
-        [System.Reflection.Assembly]::LoadWithPartialName("System.DirectoryServices.AccountManagement") | 
-            Out-Null 
- 
-        $principalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext( 
-            [System.DirectoryServices.AccountManagement.ContextType]::Domain, $Domain 
-        ) 
-    } 
- 
-    Process { 
-        foreach ($item in $Credential) { 
-            $networkCredential = $Credential.GetNetworkCredential() 
-             
-            Write-Output -InputObject $( 
-                $principalContext.ValidateCredentials( 
-                    $networkCredential.UserName, $networkCredential.Password 
-                ) 
-            ) 
-        } 
-    } 
- 
-    End { 
-        $principalContext.Dispose() 
-    } 
-} 
+<#PSScriptInfo
+.DESCRIPTION
+    Simulates an Authentication Request in a Domain envrionment using a PSCredential Object. Returns $true if both Username and Password pair are valid.
+.VERSION
+    1.3
+.GUID
+    6a18515f-73d3-4fb4-884f-412395aa5054
+.AUTHOR
+    Thomas Malkewitz @dotps1
+.TAGS
+    PSCredential, Credential
+.RELEASENOTES
+    Updated $Domain default value to $Credential.GetNetworkCredential().Domain.
+    Added support for multipul credential objects to be passed into $Credential.
+.PROJECTURI
+    http://dotps1.github.io
+ #>
+
+function Test-Credential {
+    [OutputType([Bool])]
+
+    Param (
+        [Parameter(
+            Mandatory = $true,
+            ValueFromPipeLine = $true,
+            ValueFromPipelineByPropertyName = $true
+        )]
+        [Alias(
+            'PSCredential'
+        )]
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential,
+
+        [Parameter()]
+        [String]
+        $Domain = $Credential.GetNetworkCredential().Domain
+    )
+
+    Begin {
+        [System.Reflection.Assembly]::LoadWithPartialName("System.DirectoryServices.AccountManagement") |
+            Out-Null
+
+        $principalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext(
+            [System.DirectoryServices.AccountManagement.ContextType]::Domain, $Domain
+        )
+    }
+
+    Process {
+        foreach ($item in $Credential) {
+            $networkCredential = $Credential.GetNetworkCredential()
+
+            Write-Output -InputObject $(
+                $principalContext.ValidateCredentials(
+                    $networkCredential.UserName, $networkCredential.Password
+                )
+            )
+        }
+    }
+
+    End {
+        $principalContext.Dispose()
+    }
+}
 
 function Get-FileName($initialDirectory = $PSScriptRoot){
     [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
-    
+
     $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
     $OpenFileDialog.initialDirectory = $initialDirectory
     $OpenFileDialog.filter = "CSV (*.csv)| *.csv"
@@ -254,6 +271,9 @@ function GenerateGCDS-Password {
 
 #endregion
 
+
+######################################################################################################################################################################################################
+
 #
 # Load XXML Config File
 #
@@ -287,7 +307,7 @@ notepad.exe $Report
 
 Read-Host -Prompt "Please select which CSV to use"
 
-$CSVPath = Get-FileName 
+$CSVPath = Get-FileName
 
 #
 # Show CSV-File Content
