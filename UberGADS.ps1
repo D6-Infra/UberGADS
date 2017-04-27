@@ -28,22 +28,22 @@ function loadXMLConfig{
     Try{
 
         if(-not (test-path $XMLPath)){
-            throw [System.IO.FileNotFoundException] "Could not Configuration-XML-File"
+            throw [System.IO.FileNotFoundException]
         }
 
         $Hostname = [system.environment]::MachineName
 
         $XML = [xml] (Get-Content $XMLPath)
-        $global:School = ($XML.Schools.School | where {$_.HostName -eq $Hostname}).Shortname
-        $global:SchoolName = ($XML.Schools.School | where {$_.HostName -eq $Hostname}).Longname
-        $global:SyncCMD = ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.EXE
-        $global:Config = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Config
-        $global:Report = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Report
-        $global:WorkingDir = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.WorkingDirectory
-        $global:Log = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Log
-        $global:User = ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.User
-        #$Pw = ConvertTo-SecureString ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.Password
-        #$global:Cred = new-Object System.Management.Automation.PSCredential -ArgumentList $User , $pw
+
+        $global:School = $XML.SelectSingleNode("/Schools/School[Hostname='$Hostname']")
+        
+        $global:SchoolName = $School.Longname
+        $global:SyncCMD = $School.SyncCMD.EXE
+        $global:Config = $School.GCDS.Config
+        $global:Report = $School.GCDS.Report
+        $global:Log = $School.GCDS.Log
+        $global:User = $School.SyncCMD.User
+        $global:WorkingDir = $School.GCDS.WorkingDirectory
     }
     Catch [System.Management.Automation.ItemNotFoundException],[System.IO.FileNotFoundException]{
         Write-Error "Coudln't read Configuration-XML-File from $XMLPath"
@@ -55,7 +55,7 @@ function loadXMLConfig{
     Catch{
         $ErrorMessage = $_.Exception.Message
         $FailedItem = $_.Exception.ItemName
-        Write-Error "Something failed parsing the XML-File\n" $ErrorMessage $FailedItem
+        Write-Error "Something failed parsing the XML-File`n`n$ErrorMessage`n`n$FailedItem"
         Read-Host -Prompt ""
         exit 1
     }
