@@ -39,6 +39,7 @@ function loadXMLConfig{
         $global:SyncCMD = ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.EXE
         $global:Config = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Config
         $global:Report = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Report
+        $global:WorkingDir = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.WorkingDirectory
         $global:Log = ($XML.Schools.School | where {$_.ShortName -eq $School}).GCDS.Log
         $global:User = ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.User
         #$Pw = ConvertTo-SecureString ($XML.Schools.School | where {$_.ShortName -eq $School}).SyncCMD.Password
@@ -68,14 +69,16 @@ Param(
 
     Clear-Content -Path $Report
     try{
-        $process = Start-Process -PassThru -Credential $cred -WindowStyle Minimized -FilePath $SyncCMD -ArgumentList "-c $Config -r $Report"
+        $process = Start-Process -PassThru -Credential $cred -WindowStyle Minimized -WorkingDirectory $WorkingDir -FilePath $SyncCMD -ArgumentList "-c $Config -r $Report -l TRACE"
         if(-not $runInBackground){
-            Process-Wait-Complete $process "GCDS" "Simulating"
+            Process-Wait-Complete $process "Google Cloud Directory Sync" "Simulating"
         }
     }catch{
         $ErrorMessage = $_.Exception.Message
         $FailedItem = $_.Exception.ItemName
         Write-Error "Launching the Process SimulateGCDS failed`n`n$ErrorMessage`n`n$FailedItem"
+        Read-Host -Prompt "Exiting"
+
         exit 1
     }
 }
@@ -107,24 +110,36 @@ Param(
 }
 
 function Run-GCDS {
+    try{
 
-    $process = Start-Process -PassThru -WindowStyle Minimized -Credential $cred -FilePath $SyncCMD -ArgumentList "-c $Config -r $Log -a -o"
+        $process = Start-Process -PassThru -Credential $cred -WindowStyle Minimized -WorkingDirectory $WorkingDir -FilePath $SyncCMD -ArgumentList "-c $Config -r $Log -a -o"
 
+        Process-Wait-Complete $process "Google Cloud Directory Sync" "Running"
 
-    Process-Wait-Complete $process "GCDS" "Running"
+    }catch{
+        $ErrorMessage = $_.Exception.Message
+        $FailedItem = $_.Exception.ItemName
+        Write-Error "Launching the Process Sync GCDS failed`n`n$ErrorMessage`n`n$FailedItem"
+        Read-Host -Prompt "Exiting"
+
+        exit 1
+
+    }
+
+    
 }
 
 function Create-Users ($path){
 
- $currentElement = 0
- $elements = Import-CSV $path | Measure-Object
+    $currentElement = 0
+    $elements = Import-CSV $path | Measure-Object
 
 
-if(-Not (test-path $path)){
-    Write-Error "CSV-File Not Found. Aborting"
-    return
-}
-import-Csv $path | ForEach-Object{
+    if(-Not (test-path $path)){
+        Write-Error "CSV-File Not Found. Aborting"
+        return
+    }
+    import-Csv $path | ForEach-Object{
         $currentElement++
         $samName = $_.SamAccountName;
         Write-Host $samName;
@@ -160,7 +175,7 @@ import-Csv $path | ForEach-Object{
                 }
             }
         }
-    } | Tee-Object log.txt -Append
+    } | Tee-Object $Log -Append
 
     Write-Progress -Activity "Creating Users in AD" -Completed
 
@@ -241,12 +256,12 @@ function Get-FileName($initialDirectory = $PSScriptRoot){
     $OpenFileDialog.ShowDialog() | Out-Null
 
     try{
-        Test-Path -Path $OpenFileDialog.FileName
+        Test-Path -Path $OpenFileDialog.FileName | Out-Null
     }catch{
         Write-Host -ForegroundColor Red "It looks like you didn't select a File"
     }
 
-    $OpenFileDialog.FileName
+    return $OpenFileDialog.FileName
 }
 
 function Reset-Passwords($path){
@@ -261,7 +276,7 @@ function Reset-Passwords($path){
         } catch {
             Write-Output "$user,Error"
         }
-    } | Out-File PassChange.log
+    } | Out-File $Log -Append
 }
 
 function GenerateGCDS-Password {
@@ -316,7 +331,7 @@ $CSVPath = Get-FileName
 Read-Host -Prompt "Please Confirm CSV-File content"
 
 
-Import-Csv $CSVPath | Out-GridView
+Import-Csv $CSVPath | Out-GridView -Title "Users to be Added to AD"
 
 
 #

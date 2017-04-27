@@ -9,6 +9,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\SJS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -24,6 +25,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\HJHS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -39,6 +41,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\PEPS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -54,6 +57,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\EPS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -69,6 +73,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\HPS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -84,6 +89,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\RPS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -99,6 +105,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\HNS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -114,6 +121,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\KFS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
@@ -129,6 +137,7 @@
             <Log>C:\GCDS\GCDS_sync.log</Log>
             <Report>C:\GCDS\Report.log</Report>
             <Config>C:\GCDS\DSS_2017.xml</Config>
+            <WorkingDirectory>C:\GCDS</WorkingDirectory>
         </GCDS>
         <SyncCMD>
         	<EXE>C:\Program Files (x86)\Google Apps Directory Sync\sync-cmd.exe</EXE>
