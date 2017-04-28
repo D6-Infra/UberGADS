@@ -329,31 +329,41 @@ function MainMenu{
         $choice = Read-Host "Selection?"
         Switch ($choice) {
          "1" {
+            Clear-Host
             Write-Host "Starting CSV User Import"
             sleep -seconds 1
             AddUsersToADAndGoogle
             sleep -Seconds 3
-             } 
-         "2" {Write-Host "Starting CSV Password Reset"
+            } 
+         "2" {
+            Clear-Host
+            Write-Host "Starting CSV Password Reset"
             sleep -Seconds 1
             ResetPasswords
             sleep -seconds 3
-              }
-         "3" {Write-Host "Starting Google Sync Simulation"
-             sleep -seconds 1
-             SimulateGoogleSync
-             sleep -Seconds 3
-             }
-         "4" {Write-Host "Starting Google Sync"
-             sleep -seconds 1
-             RunGoogleSync
-             sleep -Seconds 3
-             }
-         "Q" {Write-Host "Goodbye" -ForegroundColor Cyan
-             Return
-             }
-         Default {Write-Warning "Invalid Choice. Try again."
-                  sleep -milliseconds 750}
+            }
+         "3" {
+            Clear-Host
+            Write-Host "Starting Google Sync Simulation"
+            sleep -seconds 1
+            SimulateGoogleSync
+            sleep -Seconds 3
+            }
+         "4" {
+            Clear-Host
+            Write-Host "Starting Google Sync"
+            sleep -seconds 1
+            RunGoogleSync
+            sleep -Seconds 3
+            }
+         "Q" {
+            Write-Host "Goodbye" -ForegroundColor Cyan
+            Return
+            }
+         Default {
+            Write-Warning "Invalid Choice. Try again."
+            sleep -milliseconds 750
+            }
         } #switch
     } While ($True)
 
