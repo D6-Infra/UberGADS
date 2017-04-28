@@ -248,18 +248,34 @@ function Test-Credential {
 }
 
 function Get-FileName($initialDirectory = $PSScriptRoot){
-    [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
+    $fileSelected = $false
+    $tries = 0;
+    
+    Do{
 
-    $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
-    $OpenFileDialog.initialDirectory = $initialDirectory
-    $OpenFileDialog.filter = "CSV (*.csv)| *.csv"
-    $OpenFileDialog.ShowDialog() | Out-Null
+        [System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
 
-    try{
-        Test-Path -Path $OpenFileDialog.FileName | Out-Null
-    }catch{
-        Write-Host -ForegroundColor Red "It looks like you didn't select a File"
-    }
+        $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+        $OpenFileDialog.initialDirectory = $initialDirectory
+        $OpenFileDialog.filter = "CSV (*.csv)| *.csv"
+        $OpenFileDialog.ShowDialog() | Out-Null
+
+        if(($OpenFileDialog.FileName.Length -lt 1) -or (-not (Test-Path -Path $OpenFileDialog.FileName | Out-Null))) {
+            $fileSelected = $false
+            $tries += 1
+            if( $tries -ge 3){
+                Write-Error "3rd Try, no File selected, aborting."
+                Read-Host -Prompt "Exiting"
+                exit 1
+            }
+
+            Write-Error "File not Selcted. Please Try again."
+            
+        }else{
+            $fileSelected = $true
+        }
+
+    }while(-not $fileSelected)
 
     return $OpenFileDialog.FileName
 }
@@ -287,105 +303,246 @@ function GenerateGCDS-Password {
 #endregion
 
 
+function MainMenu{
+
+    $menu="
+    Welcome to the D6 AD-User-Adder!
+    You're running this at $SchoolName
+
+     #################################### 
+
+
+    1:`tAdd Users from CSV to Active Directory and Google
+    2:`tReset Passwords from CSV in Active Directory and Google
+    3:`tRun Simulation of Google Sync
+    4:`tRun Google Sync (Warning, will run directly)
+
+
+
+    Q:`tQuit
+
+    "
+
+    Do {
+        Clear-Host
+        Write-Host $menu
+        $choice = Read-Host "Selection?"
+        Switch ($choice) {
+         "1" {
+            Write-Host "Starting CSV User Import"
+            sleep -seconds 1
+            AddUsersToADAndGoogle
+            sleep -Seconds 3
+             } 
+         "2" {Write-Host "Starting CSV Password Reset"
+            sleep -Seconds 1
+            ResetPasswords
+            sleep -seconds 3
+              }
+         "3" {Write-Host "Starting Google Sync Simulation"
+             sleep -seconds 1
+             SimulateGoogleSync
+             sleep -Seconds 3
+             }
+         "4" {Write-Host "Starting Google Sync"
+             sleep -seconds 1
+             RunGoogleSync
+             sleep -Seconds 3
+             }
+         "Q" {Write-Host "Goodbye" -ForegroundColor Cyan
+             Return
+             }
+         Default {Write-Warning "Invalid Choice. Try again."
+                  sleep -milliseconds 750}
+        } #switch
+    } While ($True)
+
+}
+
+
+function AddUsersToADAndGoogle{
+
+    
+
+
+
+    #
+    # Since we're not Storing the password prompt the user for it
+    #
+    RequestPassword
+
+
+    #
+    # Run GCDS Simulation to show current Status of AD > Domain Sync
+    #
+    Simulate-GCDS
+
+    Read-Host -Prompt "Here's the current Status of Google Suite Directory Sync"
+
+    notepad.exe $Report
+
+
+    #
+    # Ask user to Choose CSV for which users to add
+    #
+
+    Read-Host -Prompt "Please select which CSV to use"
+
+    $CSVPath = Get-FileName
+
+    #
+    # Show CSV-File Content
+    #
+
+    Read-Host -Prompt "Please Confirm CSV-File content"
+
+
+    Import-Csv $CSVPath | Out-GridView -Title "Users to be Added to AD"
+
+
+    #
+    # Ask user to Confirm adding Users from CSV to AD
+    #
+
+    $answer = Read-Host -Prompt "Would you like to Add those Users to Active Directory?`nPlease enter Y or N"
+
+    if ( $answer.ToUpper() -ne "Y" )
+    {
+        Read-Host -Prompt "Exiting"
+        exit 1
+    }
+
+    #
+    # Add users to AD
+    #
+
+    Create-Users $CSVPath
+
+    #
+    # Run GCDS Simulation to show preview of new State of Google after Sync
+    #
+
+    Simulate-GCDS
+
+    Write-Host "`n`nHere are the Changes GCDS will make"
+
+    notepad.exe $Report
+
+    #
+    # Ask User to Confirm Changes to Google
+    #
+
+    $answer = Read-Host -Prompt "Would you like to go ahead and sync from AD to Google?`nPlease enter Y or N"
+
+    if ( $answer.ToUpper() -ne "Y" )
+    {
+        Read-Host -Prompt "Exiting"
+        exit 1
+    }
+
+    #
+    # Sync changes to Google
+    #
+
+    Run-GCDS
+
+    #
+    # Resetting passwords so Google-passwords will be set
+    #
+
+    Write-Host "Copying Passwords from AD to Google"
+
+    Reset-Passwords $CSVPath
+
+}
+
+function ResetPasswords{
+    #
+    # Ask user to Choose CSV for which users to add
+    #
+
+    Read-Host -Prompt "Please select which CSV to use"
+
+    $CSVPath = Get-FileName
+
+    #
+    # Show CSV-File Content
+    #
+
+    Read-Host -Prompt "Please Confirm CSV-File content"
+
+
+    Import-Csv $CSVPath | Out-GridView -Title "Passwords to change"
+
+    #
+    # Ask User to Confirm Resetting Passwords
+    #
+
+    $answer = Read-Host -Prompt "Would you like to go ahead apply those new passwords?`nPlease enter Y or N"
+
+    if ( $answer.ToUpper() -ne "Y" )
+    {
+        Read-Host -Prompt "Exiting"
+        exit 1
+    }
+
+
+    #
+    # Resetting passwords so Google-passwords will be set
+    #
+
+    Write-Host "Copying Passwords from AD to Google"
+
+    Reset-Passwords $CSVPath
+
+
+}
+
+function SimulateGoogleSync{
+    
+    #
+    # Since we're not Storing the password prompt the user for it
+    #
+    RequestPassword
+
+
+    #
+    # Run GCDS Simulation to show current Status of AD > Domain Sync
+    #
+    Simulate-GCDS
+
+    Read-Host -Prompt "Here's the current Status of Google Suite Directory Sync"
+
+    notepad.exe $Report
+
+}
+
+function RunGoogleSync{
+
+    #
+    # Since we're not Storing the password prompt the user for it
+    #
+    RequestPassword
+
+    #
+    # Sync changes to Google
+    #
+
+    Run-GCDS
+
+    Read-Host -Prompt "Here's the result of Google Suite Directory Sync"
+
+    notepad.exe $Report
+
+}
 ######################################################################################################################################################################################################
 
-#
-# Load XXML Config File
-#
+
 loadXMLConfig
 
 
-Write-Host "Welcome to the D6 AD-User-Adder!"
-Write-Host "You're running this at $SchoolName"
+MainMenu
 
 
-
-#
-# Since we're not Storing the password prompt the user for it
-#
-RequestPassword
-
-
-#
-# Run GCDS Simulation to show current Status of AD > Domain Sync
-#
-Simulate-GCDS
-
-Read-Host -Prompt "Here's the current Status of Google Suite Directory Sync"
-
-notepad.exe $Report
-
-
-#
-# Ask user to Choose CSV for which users to add
-#
-
-Read-Host -Prompt "Please select which CSV to use"
-
-$CSVPath = Get-FileName
-
-#
-# Show CSV-File Content
-#
-
-Read-Host -Prompt "Please Confirm CSV-File content"
-
-
-Import-Csv $CSVPath | Out-GridView -Title "Users to be Added to AD"
-
-
-#
-# Ask user to Confirm adding Users from CSV to AD
-#
-
-$answer = Read-Host -Prompt "Would you like to Add those Users to Active Directory?`nPlease enter Y or N"
-
-if ( $answer.ToUpper() -ne "Y" )
-{
-    Read-Host -Prompt "Exiting"
-    exit 1
-}
-
-#
-# Add users to AD
-#
-
-Create-Users $CSVPath
-
-#
-# Run GCDS Simulation to show preview of new State of Google after Sync
-#
-
-Simulate-GCDS
-
-Write-Host "`n`nHere are the Changes GCDS will make"
-
-notepad.exe $Report
-
-#
-# Ask User to Confirm Changes to Google
-#
-
-$answer = Read-Host -Prompt "Would you like to go ahead and sync from AD to Google?`nPlease enter Y or N"
-
-if ( $answer.ToUpper() -ne "Y" )
-{
-    Read-Host -Prompt "Exiting"
-    exit 1
-}
-
-#
-# Sync changes to Google
-#
-
-Run-GCDS
-
-#
-# Resetting passwords so Google-passwords will be set
-#
-
-Write-Host "Copying Passwords from AD to Google"
-
-Reset-Passwords $CSVPath
 
 Read-Host -Prompt "All Done, thanks for using UBERGADS"
