@@ -67,7 +67,7 @@ Param(
 )
 
 
-    Clear-Content -Credential $cred -Path $Report
+    Clear-Content -Path $Report
     try{
         $process = Start-Process -PassThru -Credential $cred -WindowStyle Minimized -WorkingDirectory $WorkingDir -FilePath $SyncCMD -ArgumentList "-c $Config -r $Report -l TRACE"
         if(-not $runInBackground){
@@ -260,7 +260,7 @@ function Get-FileName($initialDirectory = $PSScriptRoot){
         $OpenFileDialog.filter = "CSV (*.csv)| *.csv"
         $OpenFileDialog.ShowDialog() | Out-Null
 
-        if(($OpenFileDialog.FileName.Length -lt 1) -or (-not (Test-Path -Path $OpenFileDialog.FileName | Out-Null))) {
+        if(($OpenFileDialog.FileName.Length -lt 1) -or (-not (Test-Path -IsValid -Path $OpenFileDialog.FileName))) {
             $fileSelected = $false
             $tries += 1
             if( $tries -ge 3){

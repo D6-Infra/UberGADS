@@ -1,0 +1,2 @@
+FirstName,Surname,Office,Password,Name,SamAccountName,UPN,Groups,Description,Path
+Test,User,Dynamo6,TestU2017,Test User,TestU,TestU@endeavour.school.nz,"drive_students,Students",Term 1 2017,"OU=Students,OU=Endeavour,DC=internal,DC=endeavour,DC=school,DC=nz"
