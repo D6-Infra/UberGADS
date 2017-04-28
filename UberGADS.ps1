@@ -67,7 +67,7 @@ Param(
 )
 
 
-    Clear-Content -Path $Report
+    Clear-Content -Credential $cred -Path $Report
     try{
         $process = Start-Process -PassThru -Credential $cred -WindowStyle Minimized -WorkingDirectory $WorkingDir -FilePath $SyncCMD -ArgumentList "-c $Config -r $Report -l TRACE"
         if(-not $runInBackground){
